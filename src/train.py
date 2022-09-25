@@ -2,14 +2,14 @@ from collections import namedtuple
 import os
 from symbol import parameters
 import torch
+from torch.nn.utils import clip_grad_norm_
+from transformers import AdamW, get_linear_schedule_with_warmup
+from tqdm import trange
 
 from arguments import get_train_args
 from evaluate import evaluation
 from model import RoBertaBaseClassifier
 from preprocess import preprocess
-from torch.nn.utils import clip_grad_norm_
-from transformers import AdamW, get_linear_schedule_with_warmup
-from tqdm import trange
 from utils import jsonlload
 
 
