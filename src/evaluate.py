@@ -1,7 +1,6 @@
 from sklearn.metrics import f1_score
 
 def evaluation_f1(true_data, pred_data):
-
     true_data_list = true_data
     pred_data_list = pred_data
 
@@ -20,7 +19,6 @@ def evaluation_f1(true_data, pred_data):
     }
 
     for i in range(len(true_data_list)):
-
         # TP, FN checking
         is_ce_found = False
         is_pipeline_found = False
@@ -36,7 +34,6 @@ def evaluation_f1(true_data, pred_data):
                     is_ce_found = True
                     if y_polarity == p_polarity:
                         is_pipeline_found = True
-
                     break
 
             if is_ce_found is True:
@@ -65,7 +62,6 @@ def evaluation_f1(true_data, pred_data):
                     is_ce_found = True
                     if y_polarity == p_polarity:
                         is_pipeline_found = True
-
                     break
 
             if is_ce_found is False:

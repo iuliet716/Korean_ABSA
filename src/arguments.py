@@ -50,6 +50,7 @@ def get_train_args():
     args = parser.parse_args()
     return args
 
+
 def get_test_args():
     parser = argparse.ArgumentParser(description="sentiment analysis - train")
 
