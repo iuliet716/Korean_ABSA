@@ -1,2 +1,4 @@
 *.jsonl
+*.pt
 .venv
+__pycache__
