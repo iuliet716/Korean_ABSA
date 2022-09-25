@@ -56,7 +56,7 @@ def model_configuration(args, model, train_dataloader, FULL_FINETUNING=True):
     )
 
 
-def each_train(model, train_dataloader, optimizer, scheduler, model_path, epoch_step, max_grad_norm):
+def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_step, max_grad_norm):
     total_loss = 0
 
     for step, batch in enumerate(train_dataloader):
@@ -81,9 +81,20 @@ def each_train(model, train_dataloader, optimizer, scheduler, model_path, epoch_
     model_save_path = model_path + '/epoch_' + str(epoch_step) + '.pt'
     torch.save(model.state_dict(), model_save_path)
 
-    return model
+    return namedtuple(typename='return_model_configuration',
+        field_names=[
+            'model',
+            'optimizer',
+            'scheduler'
+        ]
+    )(
+        model,
+        optimizer,
+        scheduler
+    )
 
-def each_evaluate(model, dev_dataloader, label_id_to_name):
+
+def evaluating(model, dev_dataloader, label_id_to_name):
     model.eval()
 
     pred_list = []
@@ -102,6 +113,7 @@ def each_evaluate(model, dev_dataloader, label_id_to_name):
 
     evaluation(label_list, pred_list, len(label_id_to_name))
 
+    return model
 
 
 if __name__ == "__main__":
@@ -166,37 +178,48 @@ if __name__ == "__main__":
 
         # Entity Property
         print("Entity Property")
-        entity_property_model = each_train(
+        each_train = training(
             entity_property_model,
             entity_property_train_dataloader,
             entity_property_optimizer,
             entity_property_scheduler,
             args.entity_property_model_path,
             epoch_step,
-            max_grad_norm=1.0
+            max_grad_norm=1.0           
         )
+        entity_property_model = each_train.model
+        entity_property_optimizer = each_train.optimizer
+        entity_property_scheduler = each_train.scheduler
+
         if args.do_eval:
-            each_evaluate(
+            each_evaluate = evaluating(
                 entity_property_model,
                 entity_property_dev_dataloader,
-                label_id_to_name
+                label_id_to_name              
             )
+            entity_property_model = each_evaluate
+
 
         # Polarity
         print("Polarity")
-        polarity_model = each_train(
+        each_train = training(
             polarity_model,
             polarity_train_dataloader,
             polarity_optimizer,
             polarity_scheduler,
             args.polarity_model_path,
             epoch_step,
-            max_grad_norm=1.0
+            max_grad_norm=1.0          
         )
+        polarity_model = each_train.model
+        polarity_optimizer = each_train.optimizer
+        polarity_scheduler = each_train.scheduler
+
         if args.do_eval:
-            each_evaluate(
+            each_evaluate = evaluating(
                 polarity_model,
                 polarity_dev_dataloader,
                 polarity_id_to_name
             )
+            polarity_model = each_evaluate
 
