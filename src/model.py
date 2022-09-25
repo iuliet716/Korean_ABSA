@@ -3,7 +3,6 @@ import torch.nn as nn
 from transformers import XLMRobertaModel
 
 class SimpleClassifier(nn.Module):
-
     def __init__(self, args, num_label):
         super().__init__()
         self.dense = nn.Linear(args.classifier_hidden_size, args.classifier_hidden_size)
