@@ -121,7 +121,8 @@ def preprocess(args, json_list):
 
 
     # Add special tokens
-    tokenizer.add_special_tokens(special_tokens_dict)
+    num_added_toks = tokenizer.add_special_tokens(special_tokens_dict)
+    print("Added" + num_added_toks + "special tokens")
 
 
     # Convert from json list to TensorDataset
