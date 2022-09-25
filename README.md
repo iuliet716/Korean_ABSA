@@ -20,3 +20,4 @@ Baseline: https://github.com/teddysum/korean_ABSA_baseline
 - early stopping
 - get best model automatically from training
 - research other models
+- freeze requirements
