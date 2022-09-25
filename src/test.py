@@ -10,7 +10,7 @@ from utils import jsonlload
 args = get_test_args()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def predict_from_korean_form(tokenizer, ce_model, pc_model, entity_property_pair, label_id_to_name, data):
+def predict_from_korean_form(tokenizer, ce_model, pc_model, entity_property_pair, label_id_to_name, polarity_id_to_name, data):
     ce_model.to(device)
     ce_model.eval()
     count = 0
@@ -28,7 +28,8 @@ def predict_from_korean_form(tokenizer, ce_model, pc_model, entity_property_pair
             attention_mask = torch.tensor([tokenized_data['attention_mask']]).to(device)
             with torch.no_grad():
                 _, ce_logits = ce_model(input_ids, attention_mask)
-
+            print(pair)
+            print(ce_logits)
             ce_predictions = torch.argmax(ce_logits, dim = -1)
 
             ce_result = label_id_to_name[ce_predictions[0]]
@@ -80,7 +81,7 @@ if __name__ == "__main__":
 
 
     # Predict category extraction result and entire pipeline result
-    pred_data = predict_from_korean_form(tokenizer, entity_property_model, polarity_model, entity_property_pair, label_id_to_name, copy.deepcopy(test_data))
+    pred_data = predict_from_korean_form(tokenizer, entity_property_model, polarity_model, entity_property_pair, label_id_to_name, polarity_id_to_name, copy.deepcopy(test_data))
 
 
     # Evaluate category extraction result and entire pipeline result

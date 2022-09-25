@@ -1,6 +1,7 @@
 from collections import namedtuple
 import os
 from symbol import parameters
+from xml.parsers.expat import model
 import torch
 from torch.nn.utils import clip_grad_norm_
 from transformers import AdamW, get_linear_schedule_with_warmup
@@ -80,6 +81,8 @@ def each_train(model, train_dataloader, optimizer, scheduler, model_path, epoch_
     model_save_path = model_path + '/epoch_' + str(epoch_step) + '.pt'
     torch.save(model.state_dict(), model_save_path)
 
+    return model
+
 def each_evaluate(model, dev_dataloader, label_id_to_name):
     model.eval()
 
@@ -137,16 +140,18 @@ if __name__ == "__main__":
     print("Load model for entity property")
     entity_property_model = RoBertaBaseClassifier(args, len(label_id_to_name), len(tokenizer))
     entity_property_model.to(device)
-    entity_property_optimizer = model_configuration(args, entity_property_model, entity_property_train_dataloader, True).optimizer
-    entity_property_scheduler = model_configuration(args, entity_property_model, entity_property_train_dataloader, True).scheduler
+    entity_property_model_configuration = model_configuration(args, entity_property_model, entity_property_train_dataloader, True)
+    entity_property_optimizer = entity_property_model_configuration.optimizer
+    entity_property_scheduler = entity_property_model_configuration.scheduler
 
 
     # Load model for polarity
     print("Load model for polarity")
     polarity_model = RoBertaBaseClassifier(args, len(polarity_id_to_name), len(tokenizer))
     polarity_model.to(device)
-    polarity_optimizer = model_configuration(args, polarity_model, polarity_train_dataloader, True).optimizer
-    polarity_scheduler = model_configuration(args, polarity_model, polarity_train_dataloader, True).scheduler
+    polarity_model_configuration = model_configuration(args, polarity_model, polarity_train_dataloader, True)
+    polarity_optimizer = polarity_model_configuration.optimizer
+    polarity_scheduler = polarity_model_configuration.scheduler
 
 
     # Train
@@ -161,7 +166,7 @@ if __name__ == "__main__":
 
         # Entity Property
         print("Entity Property")
-        each_train(
+        entity_property_model = each_train(
             entity_property_model,
             entity_property_train_dataloader,
             entity_property_optimizer,
@@ -179,7 +184,7 @@ if __name__ == "__main__":
 
         # Polarity
         print("Polarity")
-        each_train(
+        polarity_model = each_train(
             polarity_model,
             polarity_train_dataloader,
             polarity_optimizer,

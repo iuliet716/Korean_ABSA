@@ -70,23 +70,35 @@ def evaluation_f1(true_data, pred_data):
             if is_pipeline_found is False:
                 pipeline_eval['FP'] += 1
 
-    ce_precision = ce_eval['TP']/(ce_eval['TP']+ce_eval['FP'])
-    ce_recall = ce_eval['TP']/(ce_eval['TP']+ce_eval['FN'])
+    try:
+        ce_precision = ce_eval['TP']/(ce_eval['TP']+ce_eval['FP'])
+        ce_recall = ce_eval['TP']/(ce_eval['TP']+ce_eval['FN'])
 
-    ce_result = {
-        'Precision': ce_precision,
-        'Recall': ce_recall,
-        'F1': 2*ce_recall*ce_precision/(ce_recall+ce_precision)
-    }
+        ce_result = {
+            'Precision': ce_precision,
+            'Recall': ce_recall,
+            'F1': 2*ce_recall*ce_precision/(ce_recall+ce_precision)
+        }
+    except ZeroDivisionError:
+        print("Error:")
+        print("ce_eval_dict")
+        print(ce_eval)
+        exit(1)
 
-    pipeline_precision = pipeline_eval['TP']/(pipeline_eval['TP']+pipeline_eval['FP'])
-    pipeline_recall = pipeline_eval['TP']/(pipeline_eval['TP']+pipeline_eval['FN'])
+    try:
+        pipeline_precision = pipeline_eval['TP']/(pipeline_eval['TP']+pipeline_eval['FP'])
+        pipeline_recall = pipeline_eval['TP']/(pipeline_eval['TP']+pipeline_eval['FN'])
 
-    pipeline_result = {
-        'Precision': pipeline_precision,
-        'Recall': pipeline_recall,
-        'F1': 2*pipeline_recall*pipeline_precision/(pipeline_recall+pipeline_precision)
-    }
+        pipeline_result = {
+            'Precision': pipeline_precision,
+            'Recall': pipeline_recall,
+            'F1': 2*pipeline_recall*pipeline_precision/(pipeline_recall+pipeline_precision)
+        }
+    except ZeroDivisionError:
+        print("Error:")
+        print("pipeline_eval_dict")
+        print(pipeline_eval)
+        exit(1)
 
     return {
         'category extraction result': ce_result,
