@@ -7,17 +7,16 @@ Baseline: https://github.com/teddysum/korean_ABSA_baseline
 
 <br>
 
-# How to use
-## Train
+## How to use
+### Train
 `$ bash train.sh`
 
-## Test
+### Test
 `$ bash test.sh`
 
 <br>
 
-# To Do
+## To Do
 - early stopping
 - get best model automatically from training
-
 - research other models
