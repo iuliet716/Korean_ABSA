@@ -18,4 +18,6 @@ Baseline: https://github.com/teddysum/korean_ABSA_baseline
 
 # To Do
 - early stopping
-- get best model automatically
+- get best model automatically from training
+
+- research other models
