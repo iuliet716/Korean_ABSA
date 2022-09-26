@@ -8,8 +8,8 @@ DATA_DIR=$ROOT_DIR/data
 MODEL_DIR=$ROOT_DIR/saved_model
 
 python3 $BIN_DIR/train.py \
-  --train_data $DATA_DIR/sample.jsonl \
-  --dev_data $DATA_DIR/sample.jsonl \
+  --train_data $DATA_DIR/nikluge-sa-2022-train.jsonl \
+  --dev_data $DATA_DIR/nikluge-sa-2022-dev.jsonl \
   --base_model xlm-roberta-base \
   --do_eval \
   --learning_rate 3e-6 \

@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     # Predict category extraction result and entire pipeline result
     pred_data = predict_from_korean_form(tokenizer, entity_property_model, polarity_model, entity_property_pair, label_id_to_name, polarity_id_to_name, copy.deepcopy(test_data))
-
+    # print(pred_data)
 
     # Evaluate category extraction result and entire pipeline result
     print("F1 result: ", evaluation_f1(test_data, pred_data))
