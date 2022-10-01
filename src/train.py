@@ -58,7 +58,7 @@ def model_configuration(args, model, train_dataloader, FULL_FINETUNING=True):
     )
 
 
-def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_step, max_grad_norm):
+def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_step, metric_prefix, max_grad_norm):
     total_loss = 0
 
     for step, batch in enumerate(train_dataloader):
@@ -81,7 +81,7 @@ def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_st
     print("Average train loss: {}".format(avg_train_loss))
 
     # Log average train loss to MLflow
-    mlflow.log_metric("Average Train Loss", avg_train_loss)
+    mlflow.log_metric(metric_prefix + "/Average Train Loss_epoch_" + str(epoch_step), avg_train_loss)
 
     model_save_path = model_path + '/epoch_' + str(epoch_step) + '.pt'
     torch.save(model.state_dict(), model_save_path)
@@ -230,6 +230,7 @@ if __name__ == "__main__":
             entity_property_scheduler,
             args.entity_property_model_path,
             epoch_step,
+            "Entity Property",
             max_grad_norm=1.0           
         )
         entity_property_model = each_train.model
@@ -256,6 +257,7 @@ if __name__ == "__main__":
             polarity_scheduler,
             args.polarity_model_path,
             epoch_step,
+            "Polarity",
             max_grad_norm=1.0          
         )
         polarity_model = each_train.model
