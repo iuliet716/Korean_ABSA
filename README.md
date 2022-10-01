@@ -7,7 +7,8 @@ Baseline: https://github.com/teddysum/korean_ABSA_baseline
 
 ## How to use
 ### Train
-`$ bash train.sh`
+`$ mlflow ui`
+`$ bash train.sh {MLflow Experiment Name} {MLflow Run Name}`
 
 ### Test
 `$ bash test.sh`
