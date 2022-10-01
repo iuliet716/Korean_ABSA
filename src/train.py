@@ -102,7 +102,7 @@ def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_st
     )
 
 
-def evaluating(model, dev_dataloader, label_id_to_name):
+def evaluating(model, dev_dataloader, label_id_to_name, epoch_step):
     model.eval()
 
     pred_list = []
@@ -119,7 +119,7 @@ def evaluating(model, dev_dataloader, label_id_to_name):
         pred_list.extend(predictions)
         label_list.extend(b_labels)
 
-    evaluation(label_list, pred_list, len(label_id_to_name))
+    evaluation(label_list, pred_list, len(label_id_to_name), epoch_step)
 
     return model
 
@@ -240,7 +240,8 @@ if __name__ == "__main__":
             each_evaluate = evaluating(
                 entity_property_model,
                 entity_property_dev_dataloader,
-                label_id_to_name              
+                label_id_to_name,
+                epoch_step              
             )
             entity_property_model = each_evaluate
 
@@ -264,7 +265,8 @@ if __name__ == "__main__":
             each_evaluate = evaluating(
                 polarity_model,
                 polarity_dev_dataloader,
-                polarity_id_to_name
+                polarity_id_to_name,
+                epoch_step
             )
             polarity_model = each_evaluate
 

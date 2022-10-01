@@ -19,7 +19,7 @@ python3 $BIN_DIR/train.py \
   --do_eval \
   --learning_rate 3e-6 \
   --eps 1e-8 \
-  --num_train_epochs 1 \
+  --num_train_epochs 20 \
   --entity_property_model_path $MODEL_DIR/category_extraction \
   --polarity_model_path $MODEL_DIR/polarity_classification \
   --batch_size 8 \

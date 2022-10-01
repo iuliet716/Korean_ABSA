@@ -106,7 +106,7 @@ def evaluation_f1(true_data, pred_data):
         'entire pipeline result': pipeline_result
     }
 
-def evaluation(y_true, y_pred, label_len):
+def evaluation(y_true, y_pred, label_len, epoch_step):
     count_list = [0]*label_len
     hit_list = [0]*label_len
     for i in range(len(y_true)):
@@ -123,7 +123,6 @@ def evaluation(y_true, y_pred, label_len):
     print(acc_list)
     print('accuracy: ', (sum(hit_list) / sum(count_list)))
     print('macro_accuracy: ', sum(acc_list) / 3)
-    # print(y_true)
 
     y_true = list(map(int, y_true))
     y_pred = list(map(int, y_pred))
@@ -134,12 +133,12 @@ def evaluation(y_true, y_pred, label_len):
 
     # Log result to MLflow
     metrics = {
-        "Accuracy": sum(hit_list) / sum(count_list),
-        "Macro Accuracy": sum(acc_list) / 3,
-        "F1 Score Micro": f1_score(y_true, y_pred, average='micro'),
-        "F1 Score Macro": f1_score(y_true, y_pred, average='macro')
+        "Accuracy_epoch_" + str(epoch_step): sum(hit_list) / sum(count_list),
+        "Macro Accuracy_epoch_" + str(epoch_step): sum(acc_list) / 3,
+        "F1 Score Micro_epoch_" + str(epoch_step): f1_score(y_true, y_pred, average='micro'),
+        "F1 Score Macro_epoch_" + str(epoch_step): f1_score(y_true, y_pred, average='macro')
     }
     for i in range(len(f1_score(y_true, y_pred, average=None))):
-        metrics["F1 Score_" + str(i)] = f1_score(y_true, y_pred, average=None)[i]
+        metrics["F1 Score_epoch_" + str(epoch_step) + "_" + str(i)] = f1_score(y_true, y_pred, average=None)[i]
 
     mlflow.log_metrics(metrics)
