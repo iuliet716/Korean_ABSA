@@ -133,12 +133,12 @@ def evaluation(y_true, y_pred, label_len, epoch_step, metric_prefix):
 
     # Log result to MLflow
     metrics = {
-        metric_prefix + "/Accuracy_epoch_" + str(epoch_step): sum(hit_list) / sum(count_list),
-        metric_prefix + "/Macro Accuracy_epoch_" + str(epoch_step): sum(acc_list) / 3,
-        metric_prefix + "/F1 Score Micro_epoch_" + str(epoch_step): f1_score(y_true, y_pred, average='micro'),
-        metric_prefix + "/F1 Score Macro_epoch_" + str(epoch_step): f1_score(y_true, y_pred, average='macro')
+        metric_prefix + "/Accuracy": sum(hit_list) / sum(count_list),
+        metric_prefix + "/Macro Accuracy": sum(acc_list) / 3,
+        metric_prefix + "/F1 Score Micro": f1_score(y_true, y_pred, average='micro'),
+        metric_prefix + "/F1 Score Macro": f1_score(y_true, y_pred, average='macro')
     }
     for i in range(len(f1_score(y_true, y_pred, average=None))):
-        metrics[metric_prefix + "/F1 Score_epoch_" + str(epoch_step) + "_" + str(i)] = f1_score(y_true, y_pred, average=None)[i]
+        metrics[metric_prefix + "/F1 Score_" + str(i)] = f1_score(y_true, y_pred, average=None)[i]
 
-    mlflow.log_metrics(metrics)
+    mlflow.log_metrics(metrics, step=epoch_step)

@@ -81,7 +81,7 @@ def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_st
     print("Average train loss: {}".format(avg_train_loss))
 
     # Log average train loss to MLflow
-    mlflow.log_metric(metric_prefix + "/Average Train Loss_epoch_" + str(epoch_step), avg_train_loss)
+    mlflow.log_metric(metric_prefix + "/Average Train Loss", avg_train_loss, step=epoch_step)
 
     model_save_path = model_path + '/epoch_' + str(epoch_step) + '.pt'
     torch.save(model.state_dict(), model_save_path)
