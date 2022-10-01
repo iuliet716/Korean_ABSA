@@ -1,5 +1,5 @@
-from sklearn.metrics import f1_score
 import mlflow
+from sklearn.metrics import f1_score
 
 def evaluation_f1(true_data, pred_data):
     true_data_list = true_data

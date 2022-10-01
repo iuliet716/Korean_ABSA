@@ -13,8 +13,8 @@ MLFLOW_RUN_NAME=$2
 python3 $BIN_DIR/train.py \
   --experiment_name $MLFLOW_EXPERIMENT_NAME \
   --run_name $MLFLOW_RUN_NAME \
-  --train_data $DATA_DIR/sample.jsonl \
-  --dev_data $DATA_DIR/sample.jsonl \
+  --train_data $DATA_DIR/nikluge-sa-2022-train.jsonl \
+  --dev_data $DATA_DIR/nikluge-sa-2022-dev.jsonl \
   --base_model xlm-roberta-base \
   --do_eval \
   --learning_rate 3e-6 \

@@ -1,8 +1,10 @@
 import copy
+import os
+
+import jsonlines
 import torch
 
 from arguments import get_test_args
-from evaluate import evaluation, evaluation_f1
 from model import RoBertaBaseClassifier
 from preprocess import preprocess
 from utils import jsonlload
@@ -45,8 +47,10 @@ def predict_from_korean_form(tokenizer, ce_model, pc_model, entity_property_pair
     return data
 
 if __name__ == "__main__":
-    print("device": device)
-    
+    # Create directories for output path
+    os.makedirs(args.output_dir, exist_ok=True)
+
+
     # Get jsonlines files for test
     print("Get jsonlines files for test")
     test_data = jsonlload(args.test_data)
@@ -81,31 +85,9 @@ if __name__ == "__main__":
     polarity_model.eval()
 
 
-    # Predict category extraction result and entire pipeline result
+    # Predict result
+    print("Predict result")
     pred_data = predict_from_korean_form(tokenizer, entity_property_model, polarity_model, entity_property_pair, label_id_to_name, polarity_id_to_name, copy.deepcopy(test_data))
-    print(pred_data)
-
-    # Evaluate category extraction result and entire pipeline result
-    print("F1 result: ", evaluation_f1(test_data, pred_data))
-
-'''
-    # Predict polarity classification result
-    pred_list = []
-    label_list = []
-    
-    for batch in polarity_test_dataloader:
-        batch = tuple(t.to(device) for t in batch)
-        b_input_ids, b_input_mask, b_labels = batch
-
-        with torch.no_grad():
-            loss, logits = polarity_model(b_input_ids, b_input_mask, b_labels)
-        
-        predictions = torch.argmax(logits, dim=-1)
-        pred_list.extend(predictions)
-        label_list.extend(b_labels)
-
-
-    # Evaluate polarity classification result
-    print("polarity classification result")
-    evaluation(label_list, pred_list, len(polarity_id_to_name))
-'''
+    with jsonlines.open(args.output_dir + "/predict.jsonl", "w") as fobj:
+        for sentence in pred_data:
+            fobj.write(sentence)

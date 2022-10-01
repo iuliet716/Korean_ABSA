@@ -18,7 +18,6 @@ from utils import jsonlload
 
 args = get_train_args()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
 
 def model_configuration(args, model, train_dataloader, FULL_FINETUNING=True):
     if FULL_FINETUNING:
@@ -126,8 +125,6 @@ def evaluating(model, dev_dataloader, label_id_to_name):
 
 
 if __name__ == "__main__":
-    print("device": device)
-
     # Create directories for model path
     os.makedirs(args.entity_property_model_path, exist_ok=True)
     os.makedirs(args.polarity_model_path, exist_ok=True)
@@ -139,11 +136,13 @@ if __name__ == "__main__":
 
     # Create/Get MLflow experiment
     try:
+        print("Create MLflow experiment: ", args.experiment_name)
         experiment_id = mlflow_client.create_experiment(
             args.experiment_name,
             artifact_location=Path.cwd().joinpath("mlruns").as_uri()
         )
     except mlflow.exceptions.MlflowException:
+        print("The MLflow experiment already exists: ", args.experiment_name)
         experiment_id = mlflow_client.get_experiment_by_name(args.experiment_name).experiment_id
 
 

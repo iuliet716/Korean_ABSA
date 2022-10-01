@@ -60,7 +60,7 @@ def get_train_args():
 
 
 def get_test_args():
-    parser = argparse.ArgumentParser(description="sentiment analysis - train")
+    parser = argparse.ArgumentParser(description="sentiment analysis - test")
 
     parser.add_argument(
         "--experiment_name", type=str, default="default",
@@ -82,9 +82,6 @@ def get_test_args():
     )
     parser.add_argument(
         "--eps", type=float, default=1e-8
-    )
-    parser.add_argument(
-        "--num_train_epochs", type=int, default=3
     )
     parser.add_argument(
         "--base_model", type=str, default="xlm-roberta-base"

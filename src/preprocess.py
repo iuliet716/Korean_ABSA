@@ -1,9 +1,9 @@
 from collections import namedtuple
+
 import pandas as pd
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoTokenizer
-
 
 entity_property_pair = [
     '제품 전체#일반', '제품 전체#가격', '제품 전체#디자인', '제품 전체#품질', '제품 전체#편의성', '제품 전체#인지도',
