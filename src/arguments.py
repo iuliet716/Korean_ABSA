@@ -4,6 +4,14 @@ def get_train_args():
     parser = argparse.ArgumentParser(description="sentiment analysis - train")
 
     parser.add_argument(
+        "--experiment_name", type=str, default="default",
+        help="MLflow Experiment Name"
+    )
+    parser.add_argument(
+        "--run_name", type=str, default="default",
+        help="MLflow Run Name"
+    )
+    parser.add_argument(
         "--train_data", type=str, default="../data/input_data_v1/train.json",
         help="train file"
     )
@@ -54,6 +62,14 @@ def get_train_args():
 def get_test_args():
     parser = argparse.ArgumentParser(description="sentiment analysis - train")
 
+    parser.add_argument(
+        "--experiment_name", type=str, default="default",
+        help="MLflow Experiment Name"
+    )
+    parser.add_argument(
+        "--run_name", type=str, default="default",
+        help="MLflow Run Name"
+    )
     parser.add_argument(
         "--test_data", type=str, default="../data/input_data_v1/test.json",
         help="test file"

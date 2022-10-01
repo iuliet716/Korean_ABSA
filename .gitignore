@@ -1,4 +1,5 @@
 *.jsonl
 *.pt
 .venv
+mlruns
 __pycache__

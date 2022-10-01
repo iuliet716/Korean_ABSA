@@ -1,7 +1,9 @@
 from collections import namedtuple
 import os
-from symbol import parameters
-from xml.parsers.expat import model
+from pathlib import Path
+
+import mlflow
+from mlflow.pytorch import log_state_dict
 import torch
 from torch.nn.utils import clip_grad_norm_
 from transformers import AdamW, get_linear_schedule_with_warmup
@@ -16,6 +18,7 @@ from utils import jsonlload
 
 args = get_train_args()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(device)
 
 def model_configuration(args, model, train_dataloader, FULL_FINETUNING=True):
     if FULL_FINETUNING:
@@ -78,8 +81,14 @@ def training(model, train_dataloader, optimizer, scheduler, model_path, epoch_st
     avg_train_loss = total_loss / len(train_dataloader)
     print("Average train loss: {}".format(avg_train_loss))
 
+    # Log average train loss to MLflow
+    mlflow.log_metric("Average Train Loss", avg_train_loss)
+
     model_save_path = model_path + '/epoch_' + str(epoch_step) + '.pt'
     torch.save(model.state_dict(), model_save_path)
+
+    # Add model to the MLflow model registry
+    log_state_dict(model.state_dict(), artifact_path=model_path.split("/")[-1] + "_epoch_" + str(epoch_step))
 
     return namedtuple(typename='return_model_configuration',
         field_names=[
@@ -117,9 +126,46 @@ def evaluating(model, dev_dataloader, label_id_to_name):
 
 
 if __name__ == "__main__":
+    print("device": device)
+
     # Create directories for model path
     os.makedirs(args.entity_property_model_path, exist_ok=True)
     os.makedirs(args.polarity_model_path, exist_ok=True)
+
+    
+    # Create MLflow client
+    mlflow_client = mlflow.client.MlflowClient()
+
+
+    # Create/Get MLflow experiment
+    try:
+        experiment_id = mlflow_client.create_experiment(
+            args.experiment_name,
+            artifact_location=Path.cwd().joinpath("mlruns").as_uri()
+        )
+    except mlflow.exceptions.MlflowException:
+        experiment_id = mlflow_client.get_experiment_by_name(args.experiment_name).experiment_id
+
+
+    # Create and Start MLflow run
+    mlflow.start_run(
+        experiment_id=experiment_id,
+        run_name=args.run_name
+    )
+
+
+    # Log hyperparameter to MLflow
+    params = {
+        "batch size": args.batch_size,
+        "learning rate": args.learning_rate,
+        "eps": args.eps,
+        "train epochs": args.num_train_epochs,
+        "base model": args.base_model,
+        "max length": args.max_len,
+        "classifer hidden size": args.classifier_hidden_size,
+        "classifier dropout prob": args.classifier_dropout_prob
+    }
+    mlflow.log_params(params)
 
 
     # Get jsonlines files for train/validation
@@ -130,14 +176,14 @@ if __name__ == "__main__":
 
     # Preprocess train data
     print("Preprocess train data")
-    train_dataloader = preprocess(args, train_data)
+    train_dataloader = preprocess(args, train_data, TEST=False)
     entity_property_train_dataloader = train_dataloader.entity_property_dataloader
     polarity_train_dataloader = train_dataloader.polarity_dataloader
 
 
     # Preprocess validation data
     print("Preprocess validation data")
-    dev_dataloader = preprocess(args, dev_data)
+    dev_dataloader = preprocess(args, dev_data, TEST=False)
     entity_property_dev_dataloader = dev_dataloader.entity_property_dataloader
     polarity_dev_dataloader = dev_dataloader.polarity_dataloader
 
@@ -223,3 +269,4 @@ if __name__ == "__main__":
             )
             polarity_model = each_evaluate
 
+mlflow.end_run()

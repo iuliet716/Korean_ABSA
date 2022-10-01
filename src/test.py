@@ -45,6 +45,8 @@ def predict_from_korean_form(tokenizer, ce_model, pc_model, entity_property_pair
     return data
 
 if __name__ == "__main__":
+    print("device": device)
+    
     # Get jsonlines files for test
     print("Get jsonlines files for test")
     test_data = jsonlload(args.test_data)
@@ -52,7 +54,7 @@ if __name__ == "__main__":
 
     # Preprocess test data
     print("Preprocess test data")
-    test_dataloader = preprocess(args, test_data)
+    test_dataloader = preprocess(args, test_data, TEST=True)
     entity_property_test_dataloader = test_dataloader.entity_property_dataloader
     polarity_test_dataloader = test_dataloader.polarity_dataloader
 
@@ -81,12 +83,12 @@ if __name__ == "__main__":
 
     # Predict category extraction result and entire pipeline result
     pred_data = predict_from_korean_form(tokenizer, entity_property_model, polarity_model, entity_property_pair, label_id_to_name, polarity_id_to_name, copy.deepcopy(test_data))
-    # print(pred_data)
+    print(pred_data)
 
     # Evaluate category extraction result and entire pipeline result
     print("F1 result: ", evaluation_f1(test_data, pred_data))
 
-
+'''
     # Predict polarity classification result
     pred_list = []
     label_list = []
@@ -106,3 +108,4 @@ if __name__ == "__main__":
     # Evaluate polarity classification result
     print("polarity classification result")
     evaluation(label_list, pred_list, len(polarity_id_to_name))
+'''

@@ -1,4 +1,5 @@
 from sklearn.metrics import f1_score
+import mlflow
 
 def evaluation_f1(true_data, pred_data):
     true_data_list = true_data
@@ -130,3 +131,15 @@ def evaluation(y_true, y_pred, label_len):
     print('f1_score: ', f1_score(y_true, y_pred, average=None))
     print('f1_score_micro: ', f1_score(y_true, y_pred, average='micro'))
     print('f1_score_macro: ', f1_score(y_true, y_pred, average='macro'))
+
+    # Log result to MLflow
+    metrics = {
+        "Accuracy": sum(hit_list) / sum(count_list),
+        "Macro Accuracy": sum(acc_list) / 3,
+        "F1 Score Micro": f1_score(y_true, y_pred, average='micro'),
+        "F1 Score Macro": f1_score(y_true, y_pred, average='macro')
+    }
+    for i in range(len(f1_score(y_true, y_pred, average=None))):
+        metrics["F1 Score_" + str(i)] = f1_score(y_true, y_pred, average=None)[i]
+
+    mlflow.log_metrics(metrics)

@@ -102,7 +102,7 @@ def get_dataset(raw_data, tokenizer, max_len):
 
 
 # Tokenize data
-def preprocess(args, json_list):
+def preprocess(args, json_list, TEST):
     special_tokens_dict = {
         'additional_special_tokens': [
             '&name&',
@@ -125,8 +125,12 @@ def preprocess(args, json_list):
 
 
     # Convert from json list to TensorDataset
-    entity_property_data, polarity_data \
-    = get_dataset(json_list, tokenizer, args.max_len)
+    if not TEST:
+        entity_property_data, polarity_data \
+        = get_dataset(json_list, tokenizer, args.max_len)
+    else:
+        entity_property_data \
+        = get_dataset(json_list, tokenizer, args.max_len)[0]
 
 
     # Convert from TensorDataset to DataLoader for entity property
@@ -135,12 +139,14 @@ def preprocess(args, json_list):
                                     batch_size=args.batch_size
                                 )
 
-
     # Convert from TensorDataset to DataLoader for polarity
-    polarity_dataloader = DataLoader(polarity_data,
-                            shuffle=True,
-                            batch_size=args.batch_size
-                        )
+    if not TEST:
+        polarity_dataloader = DataLoader(polarity_data,
+                                shuffle=True,
+                                batch_size=args.batch_size
+                            )
+    else:
+        polarity_dataloader = []
 
     return namedtuple(typename='return_preprocess', 
         field_names=[
